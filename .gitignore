@@ -1,0 +1,4 @@
+/stock-news-extrahard-start/
+/.venv/
+.idea
+__pycache__/send_sms.cpython-312.pyc
