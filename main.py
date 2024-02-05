@@ -16,7 +16,7 @@ def check_min_difference(num1, num2):
 
 today = date.today()
 yesterday = today - timedelta(days=1)
-day_before_yesterday = today - timedelta(days=6)
+day_before_yesterday = today - timedelta(days=2)
 
 NEWS_APIK = os.environ.get("NEWS_APIK")
 STOCK_APIK = os.environ.get("STOCK_APIK")
@@ -49,25 +49,26 @@ print(price_dif)
 news_response = requests.get("https://newsapi.org/v2/top-headlines", params=news_params)
 data = news_response.json()['articles']
 
-
-if price_dif >= 2:
-    news_response = requests.get("https://newsapi.org/v2/top-headlines", params=news_params)
-    print(news_response.json())
+messages = []
+if price_dif >= 5:
     j = 0
-    messages = []
-    for i in messages:
-        while j < len(data):
-            title = data[j]['title']
-            description = data[j]['description']
-            url = data[j]['url']
-            if price_dif >= 2:
-                message = f"{STOCK} 🔺{price_dif}%\n{title}'\n'{description}'\n'{url}\n\n"
-                messages.append(message)
-            elif price_dif <= 2:
-                message = f"{STOCK} 🔻{price_dif}%\n{title}'\n'{description}'\n'{url}\n\n"
-                messages.append(message)
-            j += 1
-        print(i)
-        # send_sms.send_message(i)
+    if price_dif >= 2:
+        header = f"{STOCK} 🔺{price_dif}%\n"
+        messages.append(header)
+    elif price_dif <= 2:
+        header = f"{STOCK} 🔻{price_dif}%\n"
+        messages.append(header)
+    while j < len(data):
+        news_response = requests.get("https://newsapi.org/v2/top-headlines", params=news_params)
+        title = data[j]['title']
+        description = data[j]['description']
+        url = data[j]['url']
+        message = f"{title}'\n'{description}'\n'{url}\n"
+        messages.append(message)
+        j += 1
+
+    message = '\n'.join(messages)
+
+    send_sms.send_message(message)
 
 
